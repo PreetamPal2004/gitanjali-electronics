@@ -15,7 +15,9 @@ export async function DELETE(
     }
 
     const { userId } = authResult
+    console.log("DEBUG: Remove from cart request from user:", userId)
     const { productId } = await params
+    console.log("DEBUG: Removing product ID:", productId)
 
     if (!productId) {
       return NextResponse.json(
@@ -41,6 +43,7 @@ export async function DELETE(
     )
 
     await cart.save()
+    console.log("DEBUG: product removed and cart saved.")
 
     return NextResponse.json(
       {

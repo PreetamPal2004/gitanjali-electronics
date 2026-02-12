@@ -10,6 +10,7 @@ import {
 } from "react"
 import { type Product, getProduct } from "@/lib/products"
 import { useAuthStore } from "@/lib/stores/auth-store"
+import { toast } from "sonner"
 
 export interface CartItem {
   product: Product
@@ -64,6 +65,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           localStorage.removeItem("volt-cart")
         } catch (err) {
           console.error("DB cart load failed", err)
+          toast.error("Failed to load your cart")
         }
       } else {
         const saved = localStorage.getItem("volt-cart")
@@ -111,14 +113,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
       })
 
       if (isAuthenticated) {
-        await fetch("/api/cart/add", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            productId: product.id,
-            quantity: 1,
-          }),
-        })
+        try {
+          const res = await fetch("/api/cart/add", {
+            method: "POST",
+            body: JSON.stringify({
+              productId: product.id,
+              quantity: 1,
+              priceAtTime: product.price,
+            }),
+          })
+
+          if (!res.ok) {
+            const error = await res.json()
+            throw new Error(error.error || "Failed to add to cart")
+          }
+        } catch (error: any) {
+          console.error("Add to cart failed", error)
+          toast.error(error.message || "Failed to sync with server")
+        }
       }
     },
     [isAuthenticated]
@@ -134,9 +146,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
       )
 
       if (isAuthenticated) {
-        await fetch(`/api/cart/remove/${productId}`, {
-          method: "DELETE",
-        })
+        try {
+          const res = await fetch(`/api/cart/remove/${productId}`, {
+            method: "DELETE",
+          })
+
+          if (!res.ok) {
+            const error = await res.json()
+            throw new Error(error.error || "Failed to remove from cart")
+          }
+        } catch (error: any) {
+          console.error("Remove from cart failed", error)
+          toast.error(error.message || "Failed to remove item")
+        }
       }
     },
     [isAuthenticated]
@@ -161,11 +183,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
       )
 
       if (isAuthenticated) {
-        await fetch("/api/cart/update", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId, quantity }),
-        })
+        try {
+          const res = await fetch("/api/cart/update", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId, quantity }),
+          })
+
+          if (!res.ok) {
+            const error = await res.json()
+            throw new Error(error.error || "Failed to update cart")
+          }
+        } catch (error: any) {
+          console.error("Update quantity failed", error)
+          toast.error(error.message || "Failed to update quantity")
+        }
       }
     },
     [isAuthenticated, removeItem]

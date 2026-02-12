@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter, DM_Serif_Display } from "next/font/google"
 import { Toaster } from "sonner"
 import { CartProvider } from "@/components/cart-provider"
+import { WishlistProvider } from "@/components/wishlist-provider"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 
@@ -30,9 +31,11 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${dmSerif.variable}`}>
       <body className="font-sans antialiased">
         <CartProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
+          <WishlistProvider>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+          </WishlistProvider>
         </CartProvider>
         <Toaster richColors position="top-center" />
       </body>

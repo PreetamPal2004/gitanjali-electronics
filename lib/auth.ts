@@ -58,12 +58,13 @@ export async function verifyToken(token: string) {
 
 export async function setAuthCookies(accessToken: string, refreshToken: string) {
     const cookieStore = await cookies()
-    const isProduction = process.env.NODE_ENV === "production"
+    const isProduction = false // process.env.NODE_ENV === "production"
+    console.log("DEBUG: Force setting secure: false for testing")
 
     cookieStore.set("accessToken", accessToken, {
         httpOnly: true,
         secure: isProduction,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: parseExpiration(ACCESS_TOKEN_EXPIRE),
         path: "/",
     })
@@ -71,7 +72,7 @@ export async function setAuthCookies(accessToken: string, refreshToken: string) 
     cookieStore.set("refreshToken", refreshToken, {
         httpOnly: true,
         secure: isProduction,
-        sameSite: "strict",
+        sameSite: "lax",
         maxAge: parseExpiration(REFRESH_TOKEN_EXPIRE),
         path: "/",
     })
@@ -88,6 +89,7 @@ export async function getTokenFromCookies(
     type: "access" | "refresh" = "access"
 ): Promise<string | null> {
     const cookieStore = await cookies()
+    console.log("DEBUG: Retrieving cookies (all):", cookieStore.getAll().map(c => c.name))
     const cookieName = type === "access" ? "accessToken" : "refreshToken"
     const cookie = cookieStore.get(cookieName)
 

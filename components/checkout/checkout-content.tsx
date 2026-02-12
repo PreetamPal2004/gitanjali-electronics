@@ -432,15 +432,17 @@ export function CheckoutContent() {
           <div className="mt-6 flex flex-col gap-4">
             {items.map((item) => (
               <div key={item.product.id} className="flex gap-4">
-                <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
-                  <Image
-                    src={item.product.image || "/placeholder.svg"}
-                    alt={item.product.name}
-                    fill
-                    className="object-cover"
-                    sizes="64px"
-                  />
-                  <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-[10px] font-bold text-background">
+                <div className="relative h-16 w-16 flex-shrink-0">
+                  <div className="absolute inset-0 overflow-hidden rounded-lg bg-muted">
+                    <Image
+                      src={item.product.image || "/placeholder.svg"}
+                      alt={item.product.name}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </div>
+                  <span className="absolute -right-1.5 -top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-[10px] font-bold text-background shadow-sm">
                     {item.quantity}
                   </span>
                 </div>

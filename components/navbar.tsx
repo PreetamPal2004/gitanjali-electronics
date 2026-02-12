@@ -2,8 +2,9 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ShoppingBag, Menu, X, Zap, User, LogOut } from "lucide-react"
+import { ShoppingBag, Menu, X, Zap, User, LogOut, Heart } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
+import { useWishlist } from "@/components/wishlist-provider"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useAuthStore } from "@/lib/stores/auth-store"
@@ -17,6 +18,7 @@ const links = [
 export function Navbar() {
   const pathname = usePathname()
   const { totalItems } = useCart()
+  const { items: wishlistItems } = useWishlist()
   const [mobileOpen, setMobileOpen] = useState(false)
   const { user, logout } = useAuthStore()
 
@@ -86,6 +88,18 @@ export function Navbar() {
               </Link>
             </div>
           )}
+
+          <Link
+            href="/wishlist"
+            className="relative flex items-center gap-1 text-sm font-medium text-foreground transition-colors hover:text-muted-foreground mr-2"
+          >
+            <Heart className="h-5 w-5" />
+            {wishlistItems.length > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground">
+                {wishlistItems.length}
+              </span>
+            )}
+          </Link>
 
           <Link
             href="/cart"

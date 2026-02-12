@@ -12,6 +12,7 @@ export async function authMiddleware(req: NextRequest) {
     try {
         // Get access token from cookies
         const token = await getTokenFromCookies("access")
+        console.log("DEBUG: Auth middleware token present:", !!token)
 
         if (!token) {
             return NextResponse.json(
@@ -33,6 +34,7 @@ export async function authMiddleware(req: NextRequest) {
         // Connect to DB and fetch user
         await connectDB()
         const user = await User.findById(payload.userId).select("-password")
+        console.log("DEBUG: Auth middleware user found:", !!user, payload.userId)
 
         if (!user) {
             return NextResponse.json(
